@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\Dropbox\scripts\python\cv_crypto_tracker\ui.ui'
 #
-# Created: Tue May 18 00:24:22 2021
+# Created: Sat May 22 20:37:40 2021
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -31,6 +31,9 @@ class Ui_CVCryptoTracker(object):
         self.crypto_filter_comboBox = QtWidgets.QComboBox(self.portfolio_tab)
         self.crypto_filter_comboBox.setObjectName("crypto_filter_comboBox")
         self.filter_hlayout_5.addWidget(self.crypto_filter_comboBox)
+        self.active_checkBox = QtWidgets.QCheckBox(self.portfolio_tab)
+        self.active_checkBox.setObjectName("active_checkBox")
+        self.filter_hlayout_5.addWidget(self.active_checkBox)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.filter_hlayout_5.addItem(spacerItem)
         self.label_12 = QtWidgets.QLabel(self.portfolio_tab)
@@ -40,8 +43,8 @@ class Ui_CVCryptoTracker(object):
         self.text_search_lineEdit.setObjectName("text_search_lineEdit")
         self.filter_hlayout_5.addWidget(self.text_search_lineEdit)
         self.filter_hlayout_5.setStretch(1, 1)
-        self.filter_hlayout_5.setStretch(2, 6)
-        self.filter_hlayout_5.setStretch(4, 2)
+        self.filter_hlayout_5.setStretch(3, 6)
+        self.filter_hlayout_5.setStretch(5, 2)
         self.verticalLayout_6.addLayout(self.filter_hlayout_5)
         self.portfolio_treeWidget = QtWidgets.QTreeWidget(self.portfolio_tab)
         self.portfolio_treeWidget.setObjectName("portfolio_treeWidget")
@@ -361,6 +364,7 @@ class Ui_CVCryptoTracker(object):
     def retranslateUi(self, CVCryptoTracker):
         CVCryptoTracker.setWindowTitle(QtWidgets.QApplication.translate("CVCryptoTracker", "CV Crypto Tracker v.0.0.1", None, -1))
         self.filter_label_5.setText(QtWidgets.QApplication.translate("CVCryptoTracker", "Filter: ", None, -1))
+        self.active_checkBox.setText(QtWidgets.QApplication.translate("CVCryptoTracker", "Hide zero coin", None, -1))
         self.label_12.setText(QtWidgets.QApplication.translate("CVCryptoTracker", "Search", None, -1))
         self.portfolio_treeWidget.headerItem().setText(0, QtWidgets.QApplication.translate("CVCryptoTracker", "Crypto", None, -1))
         self.portfolio_treeWidget.headerItem().setText(1, QtWidgets.QApplication.translate("CVCryptoTracker", "Amount", None, -1))

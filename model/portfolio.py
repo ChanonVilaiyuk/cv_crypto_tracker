@@ -37,6 +37,7 @@ class Portfolio(object):
     def init_signals(self):
         self.main_widget.ui.crypto_filter_comboBox.currentIndexChanged.connect(self.display)
         self.main_widget.ui.text_search_lineEdit.textChanged.connect(self.display)
+        self.main_widget.ui.active_checkBox.stateChanged.connect(self.display)
 
     def load(self):
         self.records = self.load_trade_data()
@@ -59,103 +60,144 @@ class Portfolio(object):
         self.main_widget.ui.crypto_filter_comboBox.addItems(coins)
 
     def update_price(self):
+        import random
         childs = [self.root.child(a) for a in range(self.root.childCount())]
 
         for item in childs:
             record = RecordItem(item)
             coin = record.coin()
             pair = 'USDT'
-            price = utils.get_latest_price('ETH', compare_coin=pair)
-            record.set_last(price['ETH'][pair])
+            # price = utils.get_latest_price('ETH', compare_coin=pair)
+            # record.set_last(price['ETH'][pair])
+            record.set_last(random.randint(3, 4))
+            # self.update_realtime_column(item)
+
+    def update_realtime_column(self, item):
+        # update current_value unrl_percent unrl_profit_loss from last price
+        # calculation current_value = last * volumn
+        record = RecordItem(item)
+        current_price = record.last()
+        current_value = current_price * record.volumn()
+        unrl_profit_loss = current_value - record.cost()
+        unrl_percent = (unrl_profit_loss / record.cost()) * 100
+        record.set_current_value(current_value)
+        record.set_unrl_profit_loss(unrl_profit_loss)
+        record.set_unrl_percent(unrl_percent)
 
     def set_display(self):
         key1 = self.main_widget.ui.crypto_filter_comboBox.currentText()
         key2 = self.main_widget.ui.text_search_lineEdit.text()
-
+        active = self.main_widget.ui.active_checkBox.isChecked()
 
         # display
         self.tree_widget.clear()
         self.root = self.tree_widget.invisibleRootItem()
         self.tree_widget.addTopLevelItem(self.root)
 
-
         for crypto, data in self.sum_record_dict.items():
             # top item display summary
             top_item = QtWidgets.QTreeWidgetItem(self.root)
             self.add_tree_item(top_item, [(Config.headers.index(Config.crypto), crypto)])
 
-            active_data = data['active']
-            if active_data:
-                active_item = QtWidgets.QTreeWidgetItem(top_item)
-                active_item.setText(Config.headers.index(Config.crypto), 'Active')
+            cycle_data = data['cycles']
+            if cycle_data:
+                for name, value in cycle_data.items():
+                    chunk = value['volumn']
+                    profit = value['profit']
+                    total_cost = value['cost']
+                    total_sell = value['sell']
+                    total_vol = value['total_vol']
+                    avg = value['avg']
+                    sum_vol = value['sum_vol']
+                    if not chunk:
+                        continue
+                    chunk_item = QtWidgets.QTreeWidgetItem(top_item)
+                    chunk_item.setText(Config.headers.index(Config.crypto), str(name))
+                    chunk_record = RecordItem(chunk_item)
+                    chunk_record.set_avg(avg)
+                    chunk_record.set_cost(total_cost)
+                    chunk_record.set_profit(profit)
+                    chunk_record.set_volumn(sum_vol)
 
-                for i, record in enumerate(active_data):
-                    trade_item = QtWidgets.QTreeWidgetItem(active_item)
-                    if record.action == record.buy:
-                        trade_volumn_index = Config.headers.index(Config.trade_volumn) #4
-                    elif record.action == record.sell:
-                        trade_volumn_index = Config.headers.index(Config.real_profit_loss)
-                    data_list = [
-                        (Config.headers.index(Config.crypto), record.action),
-                        (Config.headers.index(Config.volumn), record.volumn),
-                        (Config.headers.index(Config.avg), record.trade_price),
-                        (trade_volumn_index, record.trade_volumn)]
+                    if name == 'active':
+                        top_record = RecordItem(top_item)
+                        top_record.set_volumn(sum_vol)
+                        top_record.set_avg(avg)
+                        top_record.set_cost(value['active_cost'])
 
-                    self.add_tree_item(trade_item, data_list)
+                    for record in chunk:
+                        trade_item = QtWidgets.QTreeWidgetItem(chunk_item)
+                        if record.action == record.buy:
+                            trade_volumn_index = Config.headers.index(Config.trade_volumn) #4
+                            trade_price_index = Config.headers.index(Config.avg)
+                        elif record.action == record.sell:
+                            trade_volumn_index = Config.headers.index(Config.real_profit_loss)
+                            trade_price_index = Config.headers.index(Config.last)
+                        data_list = [
+                            (Config.headers.index(Config.crypto), record.action),
+                            (Config.headers.index(Config.volumn), record.volumn),
+                            (trade_price_index, record.trade_price),
+                            (trade_volumn_index, record.trade_volumn)]
+
+                        self.add_tree_item(trade_item, data_list)
 
 
-                    # print(record.action, record.volumn, record.trade_price, record.trade_volumn,
-                    #         '||', record.sum_volumn, record.sum_trade_volumn,
-                    #         record.avg)
+                        # print(record.action, record.volumn, record.trade_price, record.trade_volumn,
+                        #         '||', record.sum_volumn, record.sum_trade_volumn,
+                        #         record.avg)
 
-                    if i == len(data['active']) - 1:
-                        sum_list = [
-                            (Config.headers.index(Config.volumn), record.sum_volumn),
-                            (Config.headers.index(Config.avg), record.avg),
-                            (Config.headers.index(Config.trade_volumn), record.sum_trade_volumn)]
+                        # if i == len(data['active']) - 1:
+                        #     sum_list = [
+                        #         (Config.headers.index(Config.volumn), record.sum_volumn),
+                        #         (Config.headers.index(Config.avg), record.avg),
+                        #         (Config.headers.index(Config.trade_volumn), record.sum_trade_volumn)]
 
-                        self.add_tree_item(top_item, sum_list)
-                        self.add_tree_item(active_item, sum_list)
+                        #     self.add_tree_item(top_item, sum_list)
+                        #     self.add_tree_item(active_item, sum_list)
 
-            i = 1
-            for chunk, profit in data['cycles']:
-                chunk_item = QtWidgets.QTreeWidgetItem(top_item)
-                chunk_item.setText(0, str(i))
+            # i = 1
+            # for cycle_count, value in data['cycles'].items():
+            #     chunk = value['volumn']
+            #     profit = value['profit']
 
-                for record in chunk:
-                    transaction_item = QtWidgets.QTreeWidgetItem(chunk_item)
-                    # print(record.action, record.volumn, record.trade_price, record.trade_volumn,
-                    #     '||', record.sum_volumn, record.sum_trade_volumn,
-                    #     record.avg)
-                    if record.action == record.buy:
-                        trade_volumn_index = Config.headers.index(Config.trade_volumn)
-                    elif record.action == record.sell:
-                        trade_volumn_index = Config.headers.index(Config.real_profit_loss)
+            #     chunk_item = QtWidgets.QTreeWidgetItem(top_item)
+            #     chunk_item.setText(0, str(cycle_count))
 
-                    data_list = [
-                        (Config.headers.index(Config.crypto), record.action),
-                        (Config.headers.index(Config.volumn), record.volumn),
-                        (Config.headers.index(Config.avg), record.trade_price),
-                        (trade_volumn_index, record.trade_volumn)]
-                    self.add_tree_item(transaction_item, data_list)
+            #     for record in chunk:
+            #         transaction_item = QtWidgets.QTreeWidgetItem(chunk_item)
+            #         # print(record.action, record.volumn, record.trade_price, record.trade_volumn,
+            #         #     '||', record.sum_volumn, record.sum_trade_volumn,
+            #         #     record.avg)
+            #         if record.action == record.buy:
+            #             trade_volumn_index = Config.headers.index(Config.trade_volumn) #4
+            #             trade_price_index = Config.headers.index(Config.avg)
+            #         elif record.action == record.sell:
+            #             trade_volumn_index = Config.headers.index(Config.real_profit_loss)
+            #             trade_price_index = Config.headers.index(Config.last)
+            #         data_list = [
+            #             (Config.headers.index(Config.crypto), record.action),
+            #             (Config.headers.index(Config.volumn), record.volumn),
+            #             (trade_price_index, record.trade_price),
+            #             (trade_volumn_index, record.trade_volumn)]
+            #         self.add_tree_item(transaction_item, data_list)
 
-                    if record == chunk[-1]:
-                        sum_list = [
-                            (Config.headers.index(Config.volumn), record.sum_volumn),
-                            (Config.headers.index(Config.avg), record.avg),
-                            (Config.headers.index(Config.real_profit_loss), profit)]
-                        self.add_tree_item(chunk_item, sum_list)
+            #         if record == chunk[-1]:
+            #             sum_list = [
+            #                 (Config.headers.index(Config.volumn), record.sum_volumn),
+            #                 (Config.headers.index(Config.avg), record.avg),
+            #                 (Config.headers.index(Config.real_profit_loss), profit)]
+            #             self.add_tree_item(chunk_item, sum_list)
 
-                print('profit', profit)
+            #     print('profit', profit)
 
-                print('----')
-                i += 1
-            print('Active')
-            for record in data['active']:
-                print(record.action, record.volumn, record.trade_price, record.trade_volumn,
-                        '||', record.sum_volumn, record.sum_trade_volumn,
-                        record.avg)
-            print('====')
+            #     print('----')
+            #     i += 1
+            # print('Active')
+            # for record in data['active']:
+            #     print(record.action, record.volumn, record.trade_price, record.trade_volumn,
+            #             '||', record.sum_volumn, record.sum_trade_volumn,
+            #             record.avg)
+            # print('====')
 
     def add_tree_item(self, item, data_list):
         for data in data_list:
@@ -194,10 +236,16 @@ def sum_record(records):
 
     for crypto, records in crypto_dict.items():
         vols = list()
-        cycles = list()
+        cycles = OrderedDict()
+        cycles['active'] = dict()
+        cycle_count = 1
         active_vol = list()
         total_cost = 0.0
         total_sell = 0.0
+        total_vol = 0.0
+        avg = 0.0
+        sum_vol = 0.0
+        profit = 0.0
         # count items
         i = 0
         # count for buy / sell iteration
@@ -213,6 +261,9 @@ def sum_record(records):
                     record.sum_trade_volumn = record.trade_volumn
                 record.avg = record.sum_trade_volumn / record.sum_volumn
                 total_cost += record.trade_volumn
+                total_vol += record.volumn
+                avg = record.avg
+                sum_vol += record.volumn
 
             if record.action == record.sell:
                 last_record = records[i-1]
@@ -220,6 +271,7 @@ def sum_record(records):
                 record.sum_trade_volumn = last_record.sum_trade_volumn - record.trade_volumn
                 record.avg = last_record.avg
                 total_sell += record.trade_volumn
+                sum_vol -= record.volumn
 
             vols.append(record)
             print('add', record.action)
@@ -227,14 +279,30 @@ def sum_record(records):
             ii += 1
             if record.sum_volumn <= 0:
                 profit = total_sell - total_cost
-                cycles.append([vols, profit])
+                cycles[cycle_count] = {
+                    'volumn': vols, 'profit': profit,
+                    'cost': total_cost, 'sell': total_sell,
+                    'total_vol': total_vol, 'avg': avg, 'sum_vol': sum_vol}
                 vols = list()
                 total_sell = 0.0
                 total_cost = 0.0
+                total_vol = 0.0
+                avg = 0.0
                 ii = 0
+                sum_vol = 0.0
+                profit = 0.0
+                cycle_count += 1
 
             i += 1
-        sum_dict[crypto] = {'cycles': cycles, 'active': vols}
+
+        active_cost = sum_vol * avg
+        cycles.update({'active': {
+                'volumn': vols, 'profit': profit,
+                'cost': total_cost, 'sell': total_sell,
+                'total_vol': total_vol, 'avg': avg, 'sum_vol': sum_vol,
+                'active_cost': active_cost}})
+
+        sum_dict[crypto] = {'cycles': cycles}
 
     return sum_dict
 
@@ -311,43 +379,73 @@ class RecordItem(object):
         return self.item.data(Config.headers.index(Config.real_profit_loss), QtCore.Qt.UserRole)
 
     def set_last(self, value):
-        self.item.setText(Config.headers.index(Config.last), str(value))
+        display = str(value)
+        if isinstance(value, float):
+            display = str(round(value, 4))
+        self.item.setText(Config.headers.index(Config.last), display)
         self.item.setData(Config.headers.index(Config.last), QtCore.Qt.UserRole, value)
 
     def set_coin(self, value):
-        self.item.setText(Config.headers.index(Config.crypto), str(value))
+        display = str(value)
+        if isinstance(value, float):
+            display = str(round(value, 4))
+        self.item.setText(Config.headers.index(Config.crypto), display)
         self.item.setData(Config.headers.index(Config.crypto), QtCore.Qt.UserRole, value)
 
     def set_volumn(self, value):
-        self.item.setText(Config.headers.index(Config.volumn), str(value))
+        display = str(value)
+        if isinstance(value, float):
+            display = str(round(value, 4))
+        self.item.setText(Config.headers.index(Config.volumn), display)
         self.item.setData(Config.headers.index(Config.volumn), QtCore.Qt.UserRole, value)
 
     def set_avg(self, value):
-        self.item.setText(Config.headers.index(Config.avg), str(value))
+        display = str(value)
+        if isinstance(value, float):
+            display = str(round(value, 4))
+        self.item.setText(Config.headers.index(Config.avg), display)
         self.item.setData(Config.headers.index(Config.avg), QtCore.Qt.UserRole, value)
 
     def set_last(self, value):
-        self.item.setText(Config.headers.index(Config.last), str(value))
+        display = str(value)
+        if isinstance(value, float):
+            display = str(round(value, 4))
+        self.item.setText(Config.headers.index(Config.last), display)
         self.item.setData(Config.headers.index(Config.last), QtCore.Qt.UserRole, value)
 
     def set_cost(self, value):
-        self.item.setText(Config.headers.index(Config.trade_volumn), str(value))
+        display = str(value)
+        if isinstance(value, float):
+            display = str(round(value, 4))
+        self.item.setText(Config.headers.index(Config.trade_volumn), display)
         self.item.setData(Config.headers.index(Config.trade_volumn), QtCore.Qt.UserRole, value)
 
     def set_current_value(self, value):
-        self.item.setText(Config.headers.index(Config.current_value), str(value))
+        display = str(value)
+        if isinstance(value, float):
+            display = str(round(value, 4))
+        self.item.setText(Config.headers.index(Config.current_value), display)
         self.item.setData(Config.headers.index(Config.current_value), QtCore.Qt.UserRole, value)
 
     def set_unrl_percent(self, value):
-        self.item.setText(Config.headers.index(Config.unrl_percent), str(value))
+        display = str(value)
+        if isinstance(value, float):
+            display = str(round(value, 4))
+        self.item.setText(Config.headers.index(Config.unrl_percent), display)
         self.item.setData(Config.headers.index(Config.unrl_percent), QtCore.Qt.UserRole, value)
 
     def set_unrl_profit_loss(self, value):
-        self.item.setText(Config.headers.index(Config.unrl_profit_loss), str(value))
+        display = str(value)
+        if isinstance(value, float):
+            display = str(round(value, 4))
+        self.item.setText(Config.headers.index(Config.unrl_profit_loss), display)
         self.item.setData(Config.headers.index(Config.unrl_profit_loss), QtCore.Qt.UserRole, value)
 
     def set_profit(self, value):
-        self.item.setText(Config.headers.index(Config.real_profit_loss), str(value))
+        display = str(value)
+        if isinstance(value, float):
+            display = str(round(value, 4))
+        self.item.setText(Config.headers.index(Config.real_profit_loss), display)
         self.item.setData(Config.headers.index(Config.real_profit_loss), QtCore.Qt.UserRole, value)
 
     def update(self):

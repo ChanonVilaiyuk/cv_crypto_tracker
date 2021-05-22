@@ -26,7 +26,7 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
-         <layout class="QHBoxLayout" name="filter_hlayout_5" stretch="0,1,6,0,2">
+         <layout class="QHBoxLayout" name="filter_hlayout_5" stretch="0,1,0,6,0,2">
           <item>
            <widget class="QLabel" name="filter_label_5">
             <property name="text">
@@ -36,6 +36,13 @@
           </item>
           <item>
            <widget class="QComboBox" name="crypto_filter_comboBox"/>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="active_checkBox">
+            <property name="text">
+             <string>Hide zero coin</string>
+            </property>
+           </widget>
           </item>
           <item>
            <spacer name="horizontalSpacer_8">

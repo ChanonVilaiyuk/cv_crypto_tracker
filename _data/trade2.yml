@@ -78,30 +78,3 @@
     crypto: USDT
     price: 4
     volumn: 2000
-
-- action: sell
-  timestamp:
-  crypto: FC
-  volumn: 500
-  tradeCoin:
-    crypto: USDT
-    price: 3
-    volumn: 1500
-
-- action: buy
-  timestamp:
-  crypto: ETH
-  volumn: 0.6818
-  tradeCoin:
-    crypto: USDT
-    price: 2200
-    volumn: 1500
-
-- action: buy
-  timestamp:
-  crypto: ETH
-  volumn: 0.6818
-  tradeCoin:
-    crypto: USDT
-    price: 2200
-    volumn: 1500
