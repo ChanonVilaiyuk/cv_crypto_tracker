@@ -1,0 +1,104 @@
+- channel: VISA
+  currency: THB
+  volumn: 500.0
+  fee: 0
+  tradeCoin:
+    crypto: USDT
+    price: 32.6
+    volumn: 15.33742331
+- channel: VISA
+  currency: THB
+  volumn: 1500.0
+  fee: 0
+  tradeCoin:
+    crypto: USDT
+    price: 32.6
+    volumn: 46.01226994
+- channel: VISA
+  currency: THB
+  volumn: 1500.0
+  fee: 0
+  tradeCoin:
+    crypto: USDT
+    price: 32.6
+    volumn: 46.01226994
+- channel: P2P
+  currency: THB
+  volumn: 10000.0
+  fee: 0
+  tradeCoin:
+    crypto: USDT
+    price: 32.21
+    volumn: 310.46
+- channel: VISA
+  currency: THB
+  volumn: 2000.0
+  fee: 0
+  tradeCoin:
+    crypto: USDT
+    price: 31.90202567
+    volumn: 61.43810492
+- channel: P2P
+  currency: THB
+  volumn: 50000.0
+  fee: 0
+  tradeCoin:
+    crypto: USDT
+    price: 32.28
+    volumn: 1548.94
+- channel: P2P
+  currency: THB
+  volumn: -2000.0
+  fee: 0
+  tradeCoin:
+    crypto: USDT
+    price: -31.90202567
+    volumn: -61.43810492
+- channel: VISA
+  currency: THB
+  volumn: 50000.0
+  fee: 0
+  tradeCoin:
+    crypto: USDT
+    price: 32.67589434
+    volumn: 1530.18
+- channel: VISA
+  currency: THB
+  volumn: 20000.0
+  fee: 0
+  tradeCoin:
+    crypto: USDT
+    price: 32.85960733
+    volumn: 608.65
+- channel: VISA
+  currency: THB
+  volumn: 30000.0
+  fee: 0
+  tradeCoin:
+    crypto: USDT
+    price: 32.80373525
+    volumn: 914.53
+- channel: P2P
+  currency: THB
+  volumn: 50565
+  fee: 0
+  tradeCoin:
+    crypto: USDT
+    price: 32.56019112
+    volumn: 1552.97
+- channel: VISA
+  currency: THB
+  volumn: 20000.0
+  fee: 0
+  tradeCoin:
+    crypto: USDT
+    price: 32.86246571
+    volumn: 608.59705961
+- channel: VISA
+  currency: THB
+  volumn: 29435.0
+  fee: 0
+  tradeCoin:
+    crypto: USDT
+    price: 32.8624771
+    volumn: 895.70241197

@@ -1,0 +1,80 @@
+- action: buy
+  timestamp:
+  crypto: FC
+  volumn: 1000
+  tradeCoin:
+    crypto: USDT
+    price: 1
+    volumn: 1000
+
+- action: buy
+  timestamp:
+  crypto: FC
+  volumn: 500
+  tradeCoin:
+    crypto: USDT
+    price: 2
+    volumn: 1000
+
+- action: buy
+  timestamp:
+  crypto: FC
+  volumn: 500
+  tradeCoin:
+    crypto: USDT
+    price: 2
+    volumn: 1000
+
+- action: sell
+  timestamp:
+  crypto: FC
+  volumn: 1000
+  tradeCoin:
+    crypto: USDT
+    price: 3
+    volumn: 3000
+
+- action: sell
+  timestamp:
+  crypto: FC
+  volumn: 1000
+  tradeCoin:
+    crypto: USDT
+    price: 4
+    volumn: 4000
+
+- action: buy
+  timestamp:
+  crypto: FC
+  volumn: 1000
+  tradeCoin:
+    crypto: USDT
+    price: 3
+    volumn: 3000
+
+- action: buy
+  timestamp:
+  crypto: FC
+  volumn: 500
+  tradeCoin:
+    crypto: USDT
+    price: 4
+    volumn: 2000
+
+- action: sell
+  timestamp:
+  crypto: FC
+  volumn: 500
+  tradeCoin:
+    crypto: USDT
+    price: 4
+    volumn: 2000
+
+- action: sell
+  timestamp:
+  crypto: FC
+  volumn: 500
+  tradeCoin:
+    crypto: USDT
+    price: 4
+    volumn: 2000
